@@ -52,7 +52,7 @@ if st.button('Predict Maize Yield'):
     input_data['PHOSPHATE PER HA OF GCA (Kg per ha)'] = phosphate  
     input_data['POTASH PER HA OF GCA (Kg per ha)'] = potash
     input_data['AVERAGE RAINFALL (Millimeters)'] = rainfall    
-    input_data['AVERAGE PERCIPITATION (Millimeters)',] = precipitation
+    input_data['AVERAGE PERCIPITATION (Millimeters)'] = precipitation
     
     soil_col_name = f'SOIL TYPE PERCENT1 (Percent)_{selected_soil_type}'
     if soil_col_name in input_data:

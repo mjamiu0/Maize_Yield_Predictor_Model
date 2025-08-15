@@ -24,7 +24,7 @@ numerical_features = ['Year', 'MAIZE YIELD (Kg per ha)', 'NITROGEN PER HA OF GCA
     'SOIL TYPE PERCENT1 (Percent)_psamments', 'SOIL TYPE PERCENT1 (Percent)_pssamnets', 'SOIL TYPE PERCENT1 (Percent)_sandyalfisol', 'SOIL TYPE PERCENT1 (Percent)_udalfs',
     'SOIL TYPE PERCENT1 (Percent)_udolls/udalfs',
     'SOIL TYPE PERCENT1 (Percent)_ustalfs', 'SOIL TYPE PERCENT1 (Percent)_verticsoils', 'SOIL TYPE PERCENT1 (Percent)_vertisols']
-]
+
 # Streamlit App Title and Description
 st.title('Maize Yield Prediction Model')
 st.markdown("### Predict the maize yield based on environmental and farming factors.")

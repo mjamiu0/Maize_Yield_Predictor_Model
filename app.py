@@ -16,7 +16,6 @@ state_columns = [col for col in columns if 'State Name' in col]
 state_name = [col.replace('State Name_', '') for col in state_columns]
 
 numerical_features = [
-    'MAIZE YIELD (Kg per ha)',
     'NITROGEN PER HA OF GCA (Kg per ha)',
     'PHOSPHATE PER HA OF GCA (Kg per ha)',
     'POTASH PER HA OF GCA (Kg per ha)',

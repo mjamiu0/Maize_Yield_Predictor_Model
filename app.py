@@ -52,7 +52,7 @@ selected_state_name = st.selectbox('State Name', state_name)
 if st.button('Predict Maize Yield'):
     # Step 1: Feature Engineering on User Input
     # Step 2: Create a DataFrame from the user's input
-    input_data = {col: 0 for col in columns}
+    input_data = {col: 0 for col in features}
     input_data['Year'] = year
     input_data['AVERAGE TEMPERATURE (Centigrate)'] = avg_temp
     input_data['NITROGEN PER HA OF GCA (Kg per ha)'] = nitrogen 

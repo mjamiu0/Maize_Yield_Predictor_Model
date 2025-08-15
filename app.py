@@ -57,7 +57,7 @@ if st.button('Predict Maize Yield'):
     input_data['AVERAGE PERCIPITATION (Millimeters)',] = avg_precipitation
     
     soil_col_name = f'SOIL TYPE PERCENT1 (Percent)_{selected_soil_type}'
-        if soil_col_name in input_data:
+    if soil_col_name in input_data:
         input_data[soil_col_name] = 1
         
     state_col_name = f'State Name_{selected_state_name}'

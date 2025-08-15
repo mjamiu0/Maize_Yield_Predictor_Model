@@ -3,40 +3,40 @@ import pandas as pd
 import joblib
 import numpy as np
 
-# Load the trained model, feature columns, and the scaler
-loaded_model = joblib.load('optimized_xgboost_model.pkl')
-columns = joblib.load('model_columns.pkl')
-scaler = joblib.load('BEST_Maize_yield_prediction_scaler.pkl')
+# Load assets with error handling
+try:
+    loaded_model = joblib.load('optimized_xgboost_model.pkl')
+    columns = joblib.load('model_columns.pkl')
+    scaler = joblib.load('BEST_Maize_yield_prediction_scaler.pkl')
+except Exception as e:
+    st.error(f"Error loading model files: {e}")
+    st.stop()
 
-# Get the list of soil types and numerical features
+# Feature configuration
 soil_columns = [col for col in columns if 'SOIL TYPE PERCENT1' in col]
 soil_types = [col.replace('SOIL TYPE PERCENT1 (Percent)_', '') for col in soil_columns]
 
 state_columns = [col for col in columns if 'State Name' in col]
-state_name = [col.replace('State Name_', '') for col in state_columns]
+state_names = [col.replace('State Name_', '') for col in state_columns]
 
-numerical_features = [ 'NITROGEN PER HA OF GCA (Kg per ha)',
+numerical_features = [
+    'NITROGEN PER HA OF GCA (Kg per ha)',
     'PHOSPHATE PER HA OF GCA (Kg per ha)',
     'POTASH PER HA OF GCA (Kg per ha)',
     'AVERAGE RAINFALL (Millimeters)',
     'AVERAGE TEMPERATURE (Centigrate)',
     'AVERAGE PERCIPITATION (Millimeters)',
-    'Year' ]
-features = ['Year', 'NITROGEN PER HA OF GCA (Kg per ha)', 'PHOSPHATE PER HA OF GCA (Kg per ha)', 'POTASH PER HA OF GCA (Kg per ha)', 
-    'AVERAGE RAINFALL (Millimeters)', 'AVERAGE TEMPERATURE (Centigrate)', 'AVERAGE PERCIPITATION (Millimeters)', 'State Name_Assam', 'State Name_Bihar',
-    'State Name_Chhattisgarh', 'State Name_Gujarat', 'State Name_Haryana', 'State Name_Himachal Pradesh', 'State Name_Jharkhand', 'State Name_Karnataka', 
-    'State Name_Kerala', 'State Name_Madhya Pradesh', 'State Name_Maharashtra', 'State Name_Orissa', 'State Name_Punjab', 'State Name_Rajasthan', 'State Name_Tamil Nadu',
-    'State Name_Telangana', 'State Name_Uttar Pradesh', 'State Name_Uttarakhand', 'State Name_West Bengal', 'SOIL TYPE PERCENT1 (Percent)_fluvents', 
-    'SOIL TYPE PERCENT1 (Percent)_inceptisols', 'SOIL TYPE PERCENT1 (Percent)_loamyalfisols', 'SOIL TYPE PERCENT1 (Percent)_orthents', 'SOIL TYPE PERCENT1 (Percent)_orthids', 
-    'SOIL TYPE PERCENT1 (Percent)_psamments', 'SOIL TYPE PERCENT1 (Percent)_pssamnets', 'SOIL TYPE PERCENT1 (Percent)_sandyalfisol', 'SOIL TYPE PERCENT1 (Percent)_udalfs',
-    'SOIL TYPE PERCENT1 (Percent)_udolls/udalfs',
-    'SOIL TYPE PERCENT1 (Percent)_ustalfs', 'SOIL TYPE PERCENT1 (Percent)_verticsoils', 'SOIL TYPE PERCENT1 (Percent)_vertisols']
+    'Year'
+]
 
-# Streamlit App Title and Description
+# Ensure we're using the exact column names from the trained model
+features = columns  # Use the loaded columns directly
+
+# Streamlit UI
 st.title('Maize Yield Prediction Model')
 st.markdown("### Predict the maize yield based on environmental and farming factors.")
 
-# Create input widgets for user data
+# Input widgets
 st.header('Input Parameters')
 year = st.slider('Year', min_value=1966, max_value=2025, value=2023)
 avg_temp = st.number_input('Average Temperature (Centigrate)', value=25.0)
@@ -46,38 +46,36 @@ potash = st.number_input('Potash per ha of GCA (Kg per ha)', value=3.0)
 rainfall = st.number_input('Average Rainfall (Millimeters)', value=150.0)
 precipitation = st.number_input('Average Precipitation (Millimeters)', value=100.0)
 selected_soil_type = st.selectbox('Soil Type', soil_types)
-selected_state_name = st.selectbox('State Name', state_name)
+selected_state_name = st.selectbox('State Name', state_names)
 
-# Button to trigger the prediction
 if st.button('Predict Maize Yield'):
-    # Step 1: Feature Engineering on User Input
-    # Step 2: Create a DataFrame from the user's input
+    # Create input dictionary with all features initialized to 0
     input_data = {col: 0 for col in features}
+    
+    # Set numerical features
     input_data['Year'] = year
     input_data['AVERAGE TEMPERATURE (Centigrate)'] = avg_temp
-    input_data['NITROGEN PER HA OF GCA (Kg per ha)'] = nitrogen 
-    input_data['PHOSPHATE PER HA OF GCA (Kg per ha)'] = phosphate  
+    input_data['NITROGEN PER HA OF GCA (Kg per ha)'] = nitrogen
+    input_data['PHOSPHATE PER HA OF GCA (Kg per ha)'] = phosphate
     input_data['POTASH PER HA OF GCA (Kg per ha)'] = potash
-    input_data['AVERAGE RAINFALL (Millimeters)'] = rainfall    
+    input_data['AVERAGE RAINFALL (Millimeters)'] = rainfall
     input_data['AVERAGE PERCIPITATION (Millimeters)'] = precipitation
     
-    soil_col_name = f'SOIL TYPE PERCENT1 (Percent)_{selected_soil_type}'
-    if soil_col_name in input_data:
-        input_data[soil_col_name] = 1
-        
-    state_col_name = f'State Name_{selected_state_name}'
-    if state_col_name in input_data:
-        input_data[state_col_name] = 1
-
-    input_df = pd.DataFrame([input_data])
-    input_df = input_df[features]
-
-    # Step 3: Standardize the numerical features in the new input DataFrame
-    input_df[numerical_features] = scaler.transform(input_df[numerical_features])
-
-    # Step 4: Make the prediction
+    # Set categorical features (one-hot encoded)
+    input_data[f'SOIL TYPE PERCENT1 (Percent)_{selected_soil_type}'] = 1
+    input_data[f'State Name_{selected_state_name}'] = 1
+    
+    # Create DataFrame ensuring correct column order
+    input_df = pd.DataFrame([input_data])[features]
+    
     try:
-        prediction = model.predict(input_df)
+        # Scale only the numerical features
+        input_df[numerical_features] = scaler.transform(input_df[numerical_features])
+        
+        # Make prediction
+        prediction = loaded_model.predict(input_df)
         st.success(f'The predicted maize yield is: **{prediction[0]:.2f} Kg per ha**')
     except Exception as e:
-        st.error(f"An error occurred during prediction: {e}")
+        st.error(f"Prediction error: {str(e)}")
+        st.write("Input DataFrame columns:", input_df.columns.tolist())
+        st.write("Scaler expects features:", scaler.feature_names_in_)

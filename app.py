@@ -11,11 +11,9 @@ scaler = joblib.load('BEST_Maize_yield_prediction_scaler.pkl')
 # Get the list of soil types and numerical features
 soil_columns = [col for col in columns if 'SOIL TYPE PERCENT1' in col]
 soil_types = [col.replace('SOIL TYPE PERCENT1 (Percent)_', '') for col in soil_columns]
-selected_soil_type = st.selectbox('Soil Type', soil_types)
 
 state_columns = [col for col in columns if 'State Name' in col]
 state_name = [col.replace('State Name_', '') for col in state_columns]
-selected_state_name = st.selectbox('State Name', state_name)
 
 numerical_features = [
     'MAIZE YIELD (Kg per ha)',

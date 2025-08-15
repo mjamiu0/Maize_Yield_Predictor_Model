@@ -21,7 +21,7 @@ numerical_features = [
     'POTASH PER HA OF GCA (Kg per ha)',
     'AVERAGE RAINFALL (Millimeters)',
     'AVERAGE TEMPERATURE (Centigrate)',
-    'AVERAGE PERCIPITATION (Millimeters)',
+    'AVERAGE PRECIPITATION (Millimeters)',
     'Year'
 ]
 # Streamlit App Title and Description

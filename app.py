@@ -7,7 +7,7 @@ import numpy as np
 try:
     loaded_model = joblib.load('optimized_xgboost_model.pkl')
     columns = joblib.load('model_columns.pkl')
-    scaler = joblib.load('BEST_Maize_yield_prediction_scaler.pkl')
+   
 except Exception as e:
     st.error(f"Error loading model files: {e}")
     st.stop()
@@ -69,10 +69,6 @@ if st.button('Predict Maize Yield'):
     input_df = pd.DataFrame([input_data])[features]
     
     try:
-        # Scale only the numerical features
-        input_df[numerical_features] = scaler.transform(input_df[numerical_features])
-        
-        # Make prediction
         prediction = loaded_model.predict(input_df)
         st.success(f'The predicted maize yield is: **{prediction[0]:.2f} Kg per ha**')
     except Exception as e:

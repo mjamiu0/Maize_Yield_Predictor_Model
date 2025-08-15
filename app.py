@@ -1,0 +1,78 @@
+import streamlit as st
+import pandas as pd
+import joblib
+import numpy as np
+
+# Load the trained model, feature columns, and the scaler
+model = joblib.load('BEST_Maize_yield_prediction_model.pkl')
+columns = joblib.load('model_columns.pkl')
+scaler = joblib.load('BEST_Maize_yield_prediction_scaler.pkl')
+
+# Get the list of soil types and numerical features
+cat_features = ['State Name_Assam', 'State Name_Bihar', 'State Name_Chhattisgarh', 
+                'State Name_Gujarat', 'State Name_Haryana', 'State Name_Himachal Pradesh', 'State Name_Jharkhand', 
+                'State Name_Karnataka', 'State Name_Kerala', 'State Name_Madhya Pradesh', 'State Name_Maharashtra',
+                'State Name_Orissa', 'State Name_Punjab', 'State Name_Rajasthan', 'State Name_Tamil Nadu', 'State Name_Telangana',
+                'State Name_Uttar Pradesh', 'State Name_Uttarakhand', 'State Name_West Bengal', 'SOIL TYPE PERCENT1 (Percent)_fluvents',
+                'SOIL TYPE PERCENT1 (Percent)_inceptisols', 'SOIL TYPE PERCENT1 (Percent)_loamyalfisols', 'SOIL TYPE PERCENT1 (Percent)_orthents',
+                'SOIL TYPE PERCENT1 (Percent)_orthids', 'SOIL TYPE PERCENT1 (Percent)_psamments', 'SOIL TYPE PERCENT1 (Percent)_pssamnets', 
+                'SOIL TYPE PERCENT1 (Percent)_sandyalfisol', 'SOIL TYPE PERCENT1 (Percent)_udalfs', 'SOIL TYPE PERCENT1 (Percent)_udolls/udalfs',
+                'SOIL TYPE PERCENT1 (Percent)_ustalfs', 'SOIL TYPE PERCENT1 (Percent)_verticsoils', 'SOIL TYPE PERCENT1 (Percent)_vertisols']
+numerical_features = [
+    'MAIZE YIELD (Kg per ha)',
+    'NITROGEN PER HA OF GCA (Kg per ha)',
+    'PHOSPHATE PER HA OF GCA (Kg per ha)',
+    'POTASH PER HA OF GCA (Kg per ha)',
+    'AVERAGE RAINFALL (Millimeters)',
+    'AVERAGE TEMPERATURE (Centigrate)',
+    'AVERAGE PERCIPITATION (Millimeters)',
+    'Year'
+]
+# Streamlit App Title and Description
+st.title('Maize Yield Prediction Model')
+st.markdown("### Predict the maize yield based on environmental and farming factors.")
+
+# Create input widgets for user data
+st.header('Input Parameters')
+year = st.slider('Year', min_value=1966, max_value=2025, value=2023)
+avg_temp = st.number_input('Average Temperature (Centigrate)', value=25.0)
+nitrogen = st.number_input('Nitrogen per ha of GCA (Kg per ha)', value=10.0)
+phosphate = st.number_input('Phosphate per ha of GCA (Kg per ha)', value=5.0)
+potash = st.number_input('Potash per ha of GCA (Kg per ha)', value=3.0)
+rainfall = st.number_input('Average Rainfall (Millimeters)', value=150.0)
+precipitation = st.number_input('Average Precipitation (Millimeters)', value=100.0)
+selected_soil_type = st.selectbox('Soil Type', cat_features)
+
+# Button to trigger the prediction
+if st.button('Predict Maize Yield'):
+    # Step 1: Feature Engineering on User Input
+    # Step 2: Create a DataFrame from the user's input
+    input_data = {col: 0 for col in columns}
+    input_data['Year'] = year
+    input_data['AVERAGE TEMPERATURE (Centigrate)'] = avg_temp
+    input_data['NITROGEN PER HA OF GCA (Kg per ha)'] = nitrogen_added  
+    input_data['PHOSPHATE PER HA OF GCA (Kg per ha)'] = phosphate_added   
+    input_data['POTASH PER HA OF GCA (Kg per ha)'] = potash_added
+    input_data['AVERAGE RAINFALL (Millimeters)'] = avg_rainfall    
+    input_data['AVERAGE PERCIPITATION (Millimeters)',] = avg_precipitation
+    
+    soil_col_name = f'SOIL TYPE PERCENT1 (Percent)_{selected_soil_type}'
+        if soil_col_name in input_data:
+        input_data[soil_col_name] = 1
+        
+    state_col_name = f'State Name_{selected_state_name}'
+    if state_col_name in input_data:
+        input_data[state_col_name] = 1
+
+    input_df = pd.DataFrame([input_data])
+    input_df = input_df[columns]
+
+    # Step 3: Standardize the numerical features in the new input DataFrame
+    input_df[numerical_features] = scaler.transform(input_df[numerical_features])
+
+    # Step 4: Make the prediction
+    try:
+        prediction = model.predict(input_df)
+        st.success(f'The predicted maize yield is: **{prediction[0]:.2f} Kg per ha**')
+    except Exception as e:
+        st.error(f"An error occurred during prediction: {e}")

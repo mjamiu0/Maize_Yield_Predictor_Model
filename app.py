@@ -4,7 +4,7 @@ import joblib
 import numpy as np
 
 # Load the trained model, feature columns, and the scaler
-model = joblib.load('BEST_Maize_yield_prediction_model.pkl')
+loaded_model = joblib.load('optimized_xgboost_model.pkl')
 columns = joblib.load('model_columns.pkl')
 scaler = joblib.load('BEST_Maize_yield_prediction_scaler.pkl')
 

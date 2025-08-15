@@ -15,7 +15,7 @@ soil_types = [col.replace('SOIL TYPE PERCENT1 (Percent)_', '') for col in soil_c
 state_columns = [col for col in columns if 'State Name' in col]
 state_name = [col.replace('State Name_', '') for col in state_columns]
 
-numerical_features = ['Year', 'MAIZE YIELD (Kg per ha)', 'NITROGEN PER HA OF GCA (Kg per ha)', 'PHOSPHATE PER HA OF GCA (Kg per ha)', 'POTASH PER HA OF GCA (Kg per ha)', 
+numerical_features = ['Year', 'NITROGEN PER HA OF GCA (Kg per ha)', 'PHOSPHATE PER HA OF GCA (Kg per ha)', 'POTASH PER HA OF GCA (Kg per ha)', 
     'AVERAGE RAINFALL (Millimeters)', 'AVERAGE TEMPERATURE (Centigrate)', 'AVERAGE PERCIPITATION (Millimeters)', 'State Name_Assam', 'State Name_Bihar',
     'State Name_Chhattisgarh', 'State Name_Gujarat', 'State Name_Haryana', 'State Name_Himachal Pradesh', 'State Name_Jharkhand', 'State Name_Karnataka', 
     'State Name_Kerala', 'State Name_Madhya Pradesh', 'State Name_Maharashtra', 'State Name_Orissa', 'State Name_Punjab', 'State Name_Rajasthan', 'State Name_Tamil Nadu',

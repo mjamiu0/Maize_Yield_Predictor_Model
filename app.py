@@ -5,7 +5,7 @@ import numpy as np
 
 # Load assets with error handling
 try:
-    loaded_model = joblib.load('optimized_xgboost_model.pkl')
+    loaded_model = joblib.load('Mazie_yield_prediction_models02.pkl')
     columns = joblib.load('model_columns.pkl')
    
 except Exception as e:

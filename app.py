@@ -77,15 +77,16 @@ if st.button('Predict Maize Yield'):
             yield_category = "Low Yield"
             st.warning(f'The predicted maize yield is: **{predicted_yield:.2f} Kg per ha**')
             st.write(f"This falls into the **{yield_category}** category.")
-        elif 4000 <= predicted_yield <= 5000:
+        elif 1000 <= predicted_yield < 4000:
             yield_category = "Moderate Yield"
-            st.success(f'The predicted maize yield is: **{predicted_yield:.2f} Kg per ha**')
+            st.info(f'The predicted maize yield is: **{predicted_yield:.2f} Kg per ha**')
             st.write(f"This falls into the **{yield_category}** category.")
-        else: # predicted_yield > 10000
+        else: # predicted_yield >= 4000
             yield_category = "High Yield"
             st.success(f'The predicted maize yield is: **{predicted_yield:.2f} Kg per ha**')
             st.balloons()
             st.write(f"This falls into the **{yield_category}** category.")
+
 
     except Exception as e:
         st.error(f"Prediction error: {str(e)}")

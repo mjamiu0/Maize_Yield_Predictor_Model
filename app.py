@@ -7,7 +7,7 @@ import numpy as np
 try:
     loaded_model = joblib.load('Maize_yield_prediction_models04.pkl')
     columns = joblib.load('model_columns.pkl')
-   
+
 except Exception as e:
     st.error(f"Error loading model files: {e}")
     st.stop()
@@ -70,8 +70,25 @@ if st.button('Predict Maize Yield'):
     
     try:
         prediction = loaded_model.predict(input_df)
-        st.success(f'The predicted maize yield is: **{prediction[0]:.2f} Kg per ha**')
+        predicted_yield = prediction[0]
+        
+        # CATEGORIZE THE PREDICTION
+        if predicted_yield < 1000:
+            yield_category = "Low Yield"
+            st.warning(f'The predicted maize yield is: **{predicted_yield:.2f} Kg per ha**')
+            st.write(f"This falls into the **{yield_category}** category.")
+        elif 4000 <= predicted_yield <= 5000:
+            yield_category = "Moderate Yield"
+            st.success(f'The predicted maize yield is: **{predicted_yield:.2f} Kg per ha**')
+            st.write(f"This falls into the **{yield_category}** category.")
+        else: # predicted_yield > 10000
+            yield_category = "High Yield"
+            st.success(f'The predicted maize yield is: **{predicted_yield:.2f} Kg per ha**')
+            st.balloons()
+            st.write(f"This falls into the **{yield_category}** category.")
+
     except Exception as e:
         st.error(f"Prediction error: {str(e)}")
-        st.write("Input DataFrame columns:", input_df.columns.tolist())
-        st.write("Scaler expects features:", scaler.feature_names_in_)
+        # You can add debugging here if needed, but it's often not necessary in a deployed app
+        # st.write("Input DataFrame columns:", input_df.columns.tolist())
+        # st.write("Model features:", loaded_model.feature_names_in_) # You might not have this attribute depending on the model
